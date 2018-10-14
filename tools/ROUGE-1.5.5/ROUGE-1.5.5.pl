@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/gpfsnyu/scratch/qhv200/conda_envs/decaNLP/bin/perl -w
 # Add current dir to include
 use File::Basename;
 use lib dirname (__FILE__);
@@ -7,7 +7,7 @@ use lib dirname (__FILE__);
 # Date:        05/26/2005,05/19/2005,04/26/2005,04/03/2005,10/28/2004,10/25/2004,10/21/2004
 # Author:      Chin-Yew Lin
 # Description: Given an evaluation description file, for example: test.xml,
-#              this script computes the averages of the average ROUGE scores for 
+#              this script computes the averages of the average ROUGE scores for
 #              the evaluation pairs listed in the ROUGE evaluation configuration file.
 #              For more information, please see:
 #              http://www.isi.edu/~cyl/ROUGE
@@ -26,9 +26,9 @@ use lib dirname (__FILE__);
 #                  estimated by the first N-1 evaluation items, but it *does not* affect
 #                  average scores.
 #              (3) Change read_text and read_text_LCS functions to read exact words or
-#                  bytes required by users. Previous versions carry out whitespace 
+#                  bytes required by users. Previous versions carry out whitespace
 #                  compression and other string clear up actions before enforce the length
-#                  limit. 
+#                  limit.
 #              1.5.4.1
 #              (1) Minor description change about "-t 0" option.
 #              1.5.4
@@ -54,7 +54,7 @@ use lib dirname (__FILE__);
 #                            match based on parse result. Only BE triples with non-NIL
 #                            relation are included in the matching.
 #                  4. HM1  : This is combination of H and HM. It is similar to unigram +
-#                            bigram or skip bigram with unigram match but it's 
+#                            bigram or skip bigram with unigram match but it's
 #                            head-modifier bigram match based on parse result.
 #                            In this case, the modifier field in a BE can be "NIL"
 #                  5. HMR1 : This is combination of HM and HMR. It is similar to
@@ -150,24 +150,24 @@ use lib dirname (__FILE__);
 #              If environment variable ROUGE_EVAL_HOME does not exist, this script will
 #              will assume it can find these two database files in the current directory.
 # COPYRIGHT (C) UNIVERSITY OF SOUTHERN CALIFORNIA, 2002,2003,2004
-# University of Southern California                                           
-# Information Sciences Institute                                              
-# 4676 Admiralty Way                                                          
-# Marina Del Rey, California 90292-6695                                       
-#                                                                             
+# University of Southern California
+# Information Sciences Institute
+# 4676 Admiralty Way
+# Marina Del Rey, California 90292-6695
+#
 # This software was partially developed under SPAWAR Grant No.
 # N66001-00-1-8916 , and  the Government holds license rights under
-# DAR 7-104.9(a)(c)(1).  It is  
-# transmitted outside of the University of Southern California only under 
-# written license agreements or software exchange agreements, and its use   
-# is limited by these agreements.  At no time shall any recipient use       
-# this software in any manner which conflicts or interferes with the        
-# governmental license rights or other provisions of the governing           
-# agreement under which it is obtained.  It is supplied "AS IS," without     
-# any warranties of any kind.  It is furnished only on the basis that any    
-# party who receives it indemnifies and holds harmless the parties who       
-# furnish and originate it against any claims, demands or liabilities        
-# connected with using it, furnishing it to others or providing it to a      
+# DAR 7-104.9(a)(c)(1).  It is
+# transmitted outside of the University of Southern California only under
+# written license agreements or software exchange agreements, and its use
+# is limited by these agreements.  At no time shall any recipient use
+# this software in any manner which conflicts or interferes with the
+# governmental license rights or other provisions of the governing
+# agreement under which it is obtained.  It is supplied "AS IS," without
+# any warranties of any kind.  It is furnished only on the basis that any
+# party who receives it indemnifies and holds harmless the parties who
+# furnish and originate it against any claims, demands or liabilities
+# connected with using it, furnishing it to others or providing it to a
 # third party.  THIS NOTICE MUST NOT BE REMOVED FROM THE SOFTWARE,
 # AND IN THE EVENT THAT THE SOFTWARE IS DIVIDED, IT SHOULD BE
 # ATTACHED TO EVERY PART.
@@ -179,28 +179,28 @@ use DB_File;
 use Getopt::Std;
 #-------------------------------------------------------------------------------------
 use vars qw($opt_a $opt_b $opt_c $opt_d $opt_e $opt_f $opt_h $opt_H $opt_m $opt_n $opt_p $opt_s $opt_t $opt_l $opt_v $opt_w $opt_2 $opt_u $opt_x $opt_U $opt_3 $opt_M $opt_z);
-my $usageFull="$0\n         [-a (evaluate all systems)] 
+my $usageFull="$0\n         [-a (evaluate all systems)]
          [-c cf]
-         [-d (print per evaluation scores)] 
-         [-e ROUGE_EVAL_HOME] 
-         [-h (usage)] 
-         [-H (detailed usage)] 
-         [-b n-bytes|-l n-words] 
-         [-m (use Porter stemmer)] 
-         [-n max-ngram] 
-         [-s (remove stopwords)] 
-         [-r number-of-samples (for resampling)] 
-         [-2 max-gap-length (if < 0 then no gap length limit)] 
-         [-3 <H|HM|HMR|HM1|HMR1|HMR2> (for scoring based on BE)] 
-         [-u (include unigram in skip-bigram) default no)] 
-         [-U (same as -u but also compute regular skip-bigram)] 
-         [-w weight (weighting factor for WLCS)] 
-         [-v (verbose)] 
-         [-x (do not calculate ROUGE-L)] 
-         [-f A|B (scoring formula)] 
-         [-p alpha (0 <= alpha <=1)] 
-         [-t 0|1|2 (count by token instead of sentence)] 
-         [-z <SEE|SPL|ISI|SIMPLE>] 
+         [-d (print per evaluation scores)]
+         [-e ROUGE_EVAL_HOME]
+         [-h (usage)]
+         [-H (detailed usage)]
+         [-b n-bytes|-l n-words]
+         [-m (use Porter stemmer)]
+         [-n max-ngram]
+         [-s (remove stopwords)]
+         [-r number-of-samples (for resampling)]
+         [-2 max-gap-length (if < 0 then no gap length limit)]
+         [-3 <H|HM|HMR|HM1|HMR1|HMR2> (for scoring based on BE)]
+         [-u (include unigram in skip-bigram) default no)]
+         [-U (same as -u but also compute regular skip-bigram)]
+         [-w weight (weighting factor for WLCS)]
+         [-v (verbose)]
+         [-x (do not calculate ROUGE-L)]
+         [-f A|B (scoring formula)]
+         [-p alpha (0 <= alpha <=1)]
+         [-t 0|1|2 (count by token instead of sentence)]
+         [-z <SEE|SPL|ISI|SIMPLE>]
          <ROUGE-eval-config-file> [<systemID>]\n
 ".
   "ROUGE-eval-config-file: Specify the evaluation setup. Three files come with the ROUGE evaluation package, i.e.\n".
@@ -255,28 +255,28 @@ my $usageFull="$0\n         [-a (evaluate all systems)]
   "  -x: Do not calculate ROUGE-L.\n".
   "  -z: ROUGE-eval-config-file is a list of peer-model pair per line in the specified format (SEE|SPL|ISI|SIMPLE).\n";
 
-my $usage="$0\n         [-a (evaluate all systems)] 
+my $usage="$0\n         [-a (evaluate all systems)]
          [-c cf]
-         [-d (print per evaluation scores)] 
-         [-e ROUGE_EVAL_HOME] 
-         [-h (usage)] 
-         [-H (detailed usage)] 
-         [-b n-bytes|-l n-words] 
-         [-m (use Porter stemmer)] 
-         [-n max-ngram] 
-         [-s (remove stopwords)] 
-         [-r number-of-samples (for resampling)] 
-         [-2 max-gap-length (if < 0 then no gap length limit)] 
-         [-3 <H|HM|HMR|HM1|HMR1|HMR2> (for scoring based on BE)] 
-         [-u (include unigram in skip-bigram) default no)] 
-         [-U (same as -u but also compute regular skip-bigram)] 
-         [-w weight (weighting factor for WLCS)] 
-         [-v (verbose)] 
-         [-x (do not calculate ROUGE-L)] 
-         [-f A|B (scoring formula)] 
-         [-p alpha (0 <= alpha <=1)] 
-         [-t 0|1|2 (count by token instead of sentence)] 
-         [-z <SEE|SPL|ISI|SIMPLE>] 
+         [-d (print per evaluation scores)]
+         [-e ROUGE_EVAL_HOME]
+         [-h (usage)]
+         [-H (detailed usage)]
+         [-b n-bytes|-l n-words]
+         [-m (use Porter stemmer)]
+         [-n max-ngram]
+         [-s (remove stopwords)]
+         [-r number-of-samples (for resampling)]
+         [-2 max-gap-length (if < 0 then no gap length limit)]
+         [-3 <H|HM|HMR|HM1|HMR1|HMR2> (for scoring based on BE)]
+         [-u (include unigram in skip-bigram) default no)]
+         [-U (same as -u but also compute regular skip-bigram)]
+         [-w weight (weighting factor for WLCS)]
+         [-v (verbose)]
+         [-x (do not calculate ROUGE-L)]
+         [-f A|B (scoring formula)]
+         [-p alpha (0 <= alpha <=1)]
+         [-t 0|1|2 (count by token instead of sentence)]
+         [-z <SEE|SPL|ISI|SIMPLE>]
          <ROUGE-eval-config-file> [<systemID>]
 ";
 getopts('ahHb:c:de:f:l:mMn:p:st:r:2:3:w:uUvxz:');
@@ -539,7 +539,7 @@ if(defined($doc)) {
       # compute ROUGE score up to $opt_n-gram
       for($n=1;$n<=$opt_n;$n++) {
 	my (%ROUGEScores,%ROUGEAverages);
-	
+
 	%ROUGEScores=();
 	foreach $e (@ROUGEEvalIDs) {
 	  if($debug) {
@@ -697,7 +697,7 @@ sub bootstrapResampling {
   my $opt_t=shift;
   my $sample;
   my ($i,$ridx);
-  
+
   # Use $seed to seed the random number generator to make sure
   # we have the same random sequence every time, therefore a
   # consistent estimation of confidence interval in different runs.
@@ -778,7 +778,7 @@ sub printPerEvalData {
   my $ROUGEScores=shift;
   my $tag=shift; # tag to identify each evaluation
   my (@instances,$i,$j);
-  
+
   @instances=sort by_evalID (keys %$ROUGEScores);
   foreach $i (@instances) {
     # print average per evaluation score
@@ -812,7 +812,7 @@ sub computeAverages {
   my ($avgAvgROUGE_F,$resampleAvgROUGE_F);
   my ($ciU,$ciL);
   my (@instances,$i,$j,@rankedArray_R,@rankedArray_P,@RankedArray_F);
-  
+
   @instances=sort (keys %$ROUGEScores);
   $avgAvgROUGE_R=0;
   $avgAvgROUGE_P=0;
@@ -872,13 +872,13 @@ sub computeAverages {
     @ResamplingArray=();
     for($i=0;$i<$numOfResamples;$i++) {
       my $sample;
-      
+
       $sample=&bootstrapResampling($ROUGEScores,\@instances,$i,$opt_t);
       # sample contains average sum of the sample
       if(@ResamplingArray==0) {
 	# setup the resampling array for Avg
 	my $s;
-	
+
 	$s=[];
 	push(@$s,$sample->[0]);
 	push(@ResamplingArray,$s);
@@ -998,7 +998,7 @@ sub computeROUGEX {
   $alpha=$ROUGEParam->{"ALPHA"};
   $opt_t=$ROUGEParam->{"AVERAGE"};
   $BEMode=$ROUGEParam->{"BEMODE"};
-  
+
   # Check to see if this evaluation trial contains this $peerID.
   # Sometimes not every peer provides response for each
   # evaluation trial.
@@ -1074,7 +1074,7 @@ sub computeROUGEX {
     }
     else {
       die "Unknown ROUGE metric ID: $metric, has to be N, L, W, or S\n";
-      
+
     }
     unless(defined($opt_t)) {
       # sentence level average
@@ -1123,7 +1123,7 @@ sub computeNGramScore {
   my ($gramHit,$gramScore,$gramScoreBest);
   my ($totalGramHit,$totalGramCount);
   my ($gramScoreP,$gramScoreF,$totalGramCountP);
-  
+
   #------------------------------------------------
   # read model file and create model n-gram maps
   $totalGramHit=0;
@@ -1243,7 +1243,7 @@ sub computeSkipBigramScore {
   my ($gramHit,$gramScore,$gramScoreBest);
   my ($totalGramHitm,$totalGramCount);
   my ($gramScoreP,$gramScoreF,$totalGramCountP);
-  
+
   #------------------------------------------------
   # read model file and create model n-gram maps
   $totalGramHit=0;
@@ -1369,7 +1369,7 @@ sub computeLCSScore {
   my ($totalLCSHitm,$totalLCSCount);
   my (%peer_1grams,%tmp_peer_1grams,%model_1grams,$peerText1,$modelText1);
   my ($lcsScoreP,$lcsScoreF,$totalLCSCountP);
-  
+
   #------------------------------------------------
   $totalLCSHit=0;
   $totalLCSCount=0;
@@ -1415,7 +1415,7 @@ sub computeLCSScore {
     &readText($modelPath,\$modelText1,$inputFormat,$lengthLimit,$byteLimit);
     if(defined($opt_M)) { # only apply stemming on models
       $opt_m=1;
-    }        
+    }
     &createNGram($modelText1,\%model_1grams,1);
     if(defined($opt_M)) { # only apply stemming on models
       $opt_m=undef;
@@ -1508,7 +1508,7 @@ sub computeWLCSScore {
   my ($totalLCSHitm,$totalLCSCount);
   my (%peer_1grams,%tmp_peer_1grams,%model_1grams,$peerText1,$modelText1);
   my ($lcsScoreP,$lcsScoreF,$totalLCSCountP);
-  
+
   #------------------------------------------------
   # read model file and create model n-gram maps
   $totalLCSHit=0;
@@ -1640,7 +1640,7 @@ sub computeBEScore {
   my ($BEHit,$BEScore,$BEScoreBest);
   my ($totalBEHit,$totalBECount);
   my ($BEScoreP,$BEScoreF,$totalBECountP);
-  
+
   #------------------------------------------------
   # read model file and create model BE maps
   $totalBEHit=0;
@@ -1760,7 +1760,7 @@ sub readTextOld {
   my $lengthLimit=shift;
   my $byteLimit=shift;
   my ($text,$bsize,$wsize,@words,$done);
-  
+
   $$tokenizedText=undef;
   $bsize=0;
   $wsize=0;
@@ -1824,7 +1824,7 @@ sub readText {
   my $lengthLimit=shift;
   my $byteLimit=shift;
   my ($text,$bsize,$wsize,@words,$done,@sntList);
-  
+
   $$tokenizedText=undef;
   $bsize=0;
   $wsize=0;
@@ -1943,7 +1943,7 @@ sub readBE {
   my $BEList=shift;
   my $type=shift;
   my ($line);
-  
+
   open(TEXT,$inPath)||die "Cannot open $inPath\n";
   if(defined($opt_v)) {
     print STDERR "$inPath\n";
@@ -1978,7 +1978,7 @@ sub checkSummarySize {
   my $lenghtLimit=shift;
   my $byteLimit=shift;
   my (@words);
-  
+
   @words=split(/\s+/,$$text);
   if(($lengthLimit==0&&$byteLimit==0)||
      ($lengthLimit!=0&&(scalar @words)+$$wsize<=$lengthLimit)||
@@ -2012,7 +2012,7 @@ sub checkSummarySize {
       }
       else {
 	$$tokenizedText=substr($$text,0,$byteLimit-$$bsize);
-	
+
       }
       $$done=1;
     }
@@ -2028,7 +2028,7 @@ sub readText_LCS {
   my $lengthLimit=shift;
   my $byteLimit=shift;
   my ($text,$t,$bsize,$wsize,$done,@sntList);
-  
+
   @{$tokenizedText}=();
   $bsize=0;
   $wsize=0;
@@ -2129,7 +2129,7 @@ sub readText_LCS_old {
   my $lengthLimit=shift;
   my $byteLimit=shift;
   my ($text,$t,$bsize,$wsize,$done);
-  
+
   @{$tokenizedText}=();
   $bsize=0;
   $wsize=0;
@@ -2193,7 +2193,7 @@ sub checkSummarySize_LCS {
   my $lenghtLimit=shift;
   my $byteLimit=shift;
   my (@words);
-  
+
   @words=split(/\s+/,$$text);
   if(($lengthLimit==0&&$byteLimit==0)||
      ($lengthLimit!=0&&(scalar @words)+$$wsize<=$lengthLimit)||
@@ -2222,7 +2222,7 @@ sub ngramScore {
   my $hit=shift;
   my $score=shift;
   my ($s,$t,@tokens);
-  
+
   $$hit=0;
   @tokens=keys (%$model_grams);
   foreach $t (@tokens) {
@@ -2252,7 +2252,7 @@ sub skipBigramScore {
   my $hit=shift;
   my $score=shift;
   my ($s,$t,@tokens);
-  
+
   $$hit=0;
   @tokens=keys (%$model_grams);
   foreach $t (@tokens) {
@@ -2285,7 +2285,7 @@ sub lcs {
   my $model_1grams=shift;
   my $peer_1grams=shift;
   my ($i,$j,@hitMask,@LCS);
-  
+
   $$hit=0;
   $$base=0;
   # compute LCS length for each model/peer pair
@@ -2348,7 +2348,7 @@ sub lcs_inner {
   my $n=scalar @$peer; # length of peer
   my ($i,$j);
   my (@c,@b);
-  
+
   if(@{$model}==0) {
     return;
   }
@@ -2394,7 +2394,7 @@ sub wlcs {
   my $model_1grams=shift;
   my $peer_1grams=shift;
   my ($i,$j,@hitMask,@LCS,$hitLen);
-  
+
   $$hit=0;
   $$base=0;
   # compute LCS length for each model/peer pair
@@ -2457,14 +2457,14 @@ sub wlcs {
 sub wlcsWeight {
   my $r=shift;
   my $power=shift;
-  
+
   return $r**$power;
 }
 
 sub wlcsWeightInverse {
   my $r=shift;
   my $power=shift;
-  
+
   return $r**(1/$power);
 }
 
@@ -2477,7 +2477,7 @@ sub wlcs_inner {
   my $n=scalar @$peer; # length of peer
   my ($i,$j);
   my (@c,@b,@l);
-  
+
   if(@{$model}==0) {
     return;
   }
@@ -2525,7 +2525,7 @@ sub markLCS {
   my $b=shift;
   my $i=shift;
   my $j=shift;
-  
+
   while($i!=0&&$j!=0) {
     if($b->[$i][$j] eq "\\") {
       $i--;
@@ -2551,7 +2551,7 @@ sub getBEScore {
   my $hit=shift;
   my $score=shift;
   my ($s,$t,@tokens);
-  
+
   $$hit=0;
   @tokens=keys (%$modelBEs);
   foreach $t (@tokens) {
@@ -2581,11 +2581,11 @@ sub getBEScore {
 sub MorphStem {
   my $token=shift;
   my ($os,$ltoken);
-  
+
   if(!defined($token)||length($token)==0) {
     return undef;
   }
-  
+
   $ltoken=$token;
   $ltoken=~tr/A-Z/a-z/;
   if(exists($exceptiondb{$ltoken})) {
@@ -2605,7 +2605,7 @@ sub createNGram {
   my ($gram);
   my ($count);
   my ($byteSize);
-  
+
   # remove stopwords
   if($useStopwords) {
     %stopwords=(); # consider stop words
@@ -2618,7 +2618,7 @@ sub createNGram {
   $byteSize=0;
   for($i=0;$i<=$#mx_tokens;$i++) {
     unless(exists($stopwords{$mx_tokens[$i]})) {
-      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space 
+      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space
       if($mx_tokens[$i]=~/^[a-z0-9\$]/o) {
 	if(defined($opt_m)) {
 	  # use stemmer
@@ -2669,7 +2669,7 @@ sub createSkipBigram {
   my ($gram);
   my ($count);
   my ($byteSize);
-  
+
   # remove stopwords
   if($useStopwords) {
     %stopwords=(); # consider stop words
@@ -2682,7 +2682,7 @@ sub createSkipBigram {
   $byteSize=0;
   for($i=0;$i<=$#mx_tokens;$i++) {
     unless(exists($stopwords{$mx_tokens[$i]})) {
-      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space 
+      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space
       if($mx_tokens[$i]=~/^[a-z0-9\$]/o) {
 	if(defined($opt_m)) {
 	  # use stemmer
@@ -2741,7 +2741,7 @@ sub createBE {
   my $BEMap=shift;
   my $BEMode=shift;
   my ($i);
-  
+
   $BEMap->{"_cn_"}=0;
   unless(scalar @{$BEList} > 0) {
     return;
@@ -2806,7 +2806,7 @@ sub createBE {
       $BEMap->{"_cn_"}++;
     }
     elsif($BEMode eq "HMR1"&&
-	  $fds[1] ne "nil") { 
+	  $fds[1] ne "nil") {
       # relation can be "NIL" but modifier has to have value
       my $triple="$stemH|$stemM|$fds[2]";
       unless(exists($BEMap->{$triple})) {
@@ -2830,7 +2830,7 @@ sub createBE {
 sub MorphStemMulti {
   my $string=shift;
   my (@tokens,@stems,$t,$i);
-  
+
   @tokens=split(/\s+/,$string);
   foreach $t (@tokens) {
     if($t=~/[A-Za-z0-9]/o&&
@@ -2853,7 +2853,7 @@ sub tokenizeText {
   my $tokenizedText=shift;
   my @mx_tokens=();
   my ($i,$byteSize);
-  
+
   # remove stopwords
   if($useStopwords) {
     %stopwords=(); # consider stop words
@@ -2866,7 +2866,7 @@ sub tokenizeText {
   @{$tokenizedText}=();
   for($i=0;$i<=$#mx_tokens;$i++) {
     unless(exists($stopwords{$mx_tokens[$i]})) {
-      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space 
+      $byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space
       if($mx_tokens[$i]=~/^[a-z0-9\$]/o) {
 	if(defined($opt_m)) {
 	  # use stemmer
@@ -2896,7 +2896,7 @@ sub tokenizeText_LCS {
   my $byteLimit=shift;
   my @mx_tokens=();
   my ($i,$byteSize,$t,$done);
-  
+
   # remove stopwords
   if($useStopwords) {
     %stopwords=(); # consider stop words
@@ -2913,7 +2913,7 @@ sub tokenizeText_LCS {
     push(@{$tokenizedText},[]);
     for($i=0;$i<=$#mx_tokens;$i++) {
       unless(exists($stopwords{$mx_tokens[$i]})) {
-	$byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space 
+	$byteSize+=length($mx_tokens[$i])+1; # the length of words in bytes so far + 1 space
 	if($mx_tokens[$i]=~/^[a-z0-9\$]/o) {
 	  if(defined($opt_m)) {
 	    # use stemmer
@@ -3027,7 +3027,7 @@ sub readEvals {
   my ($node)=shift;
   my ($evalID)=shift;
   my ($inputFormat,$peerRoot,$modelRoot,$peerFile,$modelFile,$peerID,$modelID);
-  
+
   if(defined($opt_z)) {
     # Input file configuration is a list of peer/model pair for each evaluation
     # instance. Each evaluation pair is in a line separated by white spaces
@@ -3211,7 +3211,7 @@ sub stem
      # now map initial y to Y so that the patterns never treat it as vowel:
      $w =~ /^./; $firstch = $&;
      if ($firstch =~ /^y/) { $w = ucfirst $w; }
-     
+
      # Step 1a
      if ($w =~ /(ss|i)es$/) { $w=$`.$1; }
      elsif ($w =~ /([^s])s$/) { $w=$`.$1; }
@@ -3273,22 +3273,22 @@ return $w;
 }
 
   sub initialise {
-    
+
     %step2list =
       ( 'ational'=>'ate', 'tional'=>'tion', 'enci'=>'ence', 'anci'=>'ance', 'izer'=>'ize', 'bli'=>'ble',
 	'alli'=>'al', 'entli'=>'ent', 'eli'=>'e', 'ousli'=>'ous', 'ization'=>'ize', 'ation'=>'ate',
 	'ator'=>'ate', 'alism'=>'al', 'iveness'=>'ive', 'fulness'=>'ful', 'ousness'=>'ous', 'aliti'=>'al',
 	'iviti'=>'ive', 'biliti'=>'ble', 'logi'=>'log');
-    
+
     %step3list =
       ('icate'=>'ic', 'ative'=>'', 'alize'=>'al', 'iciti'=>'ic', 'ical'=>'ic', 'ful'=>'', 'ness'=>'');
-    
-    
+
+
     $c =    "[^aeiou]";          # consonant
     $v =    "[aeiouy]";          # vowel
     $C =    "${c}[^aeiouy]*";    # consonant sequence
     $V =    "${v}[aeiou]*";      # vowel sequence
-    
+
     $mgr0 = "^(${C})?${V}${C}";               # [C]VC... is m>0
     $meq1 = "^(${C})?${V}${C}(${V})?" . '$';  # [C]VC[V] is m=1
    $mgr1 = "^(${C})?${V}${C}${V}${C}";       # [C]VCVC... is m>1

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/gpfsnyu/scratch/qhv200/conda_envs/decaNLP/bin/perl -w
 use DB_File;
 @ARGV!=3&&die "Usage: buildExceptionDB.pl WordNet-exception-file-directory exception-file-extension output-file\n";
 opendir(DIR,$ARGV[0])||die "Cannot open directory $ARGV[0]\n";

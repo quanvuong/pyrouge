@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/gpfsnyu/scratch/qhv200/conda_envs/decaNLP/bin/perl -w
 use Cwd;
 $curdir=getcwd;
 $ROUGE="../ROUGE-1.5.5.pl";
